@@ -12,6 +12,10 @@ int main() {
 
   NaSch::Route r;
   NaSch::initialiser(r, 50, 3);
-
+  NaSch::ajouter(r, 5);
+  NaSch::ajouter(r, 5);
+  NaSch::ajouter(r, 5);
+  NaSch::ajouter(r, 5);
+  NaSch::afficherR(r);
   return 0;
 }
