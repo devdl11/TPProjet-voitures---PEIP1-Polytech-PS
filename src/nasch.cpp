@@ -50,7 +50,9 @@ size_t voitureSuivante(const Route &r, size_t start) {
     if (not r.cellules.at((index + start) % s).estVide()) {
       return (index + start) % s;
     }
+    index ++;
   }
+  return 0;
 }
 
 void freiner(Route &r) {
@@ -144,7 +146,6 @@ void supprimer(Route &r, char Id) {
     return;
   }
   r.voitures.erase(r.voitures.begin());
-
 }
 
 void simuler(Route &r, int n) {
