@@ -3,7 +3,6 @@
 //
 
 #include "nasch.h"
-#include <stdint.h>
 #include <iostream>
 #include <cstdlib>
 #include <vector>
@@ -144,7 +143,7 @@ void supprimer(Route &r, char Id) {
     tracing::trace(&"Error : Impossible de trouver la voiture ayant l'id : " [ Id]);
     return;
   }
-  r.voitures.erase(r.voitures.begin() + (pt_vt->position));
+  r.voitures.erase(r.voitures.begin());
 
 }
 
@@ -195,6 +194,11 @@ void afficherV(const Route &r, char Id) {
 
 int saVitesse(const Route &r, char Id) {
   const Voiture * v = trouverSelonId(r, (unsigned char)Id);
+  if (v == nullptr) {
+    tracing::trace(&"Error: Impossible de trouver la voiture ayant l'id:" [ Id]);
+    return -1;
+  }
+  return v->vitesse;
 }
 
 bool aRalenti(const Route &r, char Id) {

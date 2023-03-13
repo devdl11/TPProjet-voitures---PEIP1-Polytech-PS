@@ -18,7 +18,7 @@ constexpr char ALPHABET[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxy
 static unsigned char idsBuffer[MAX_VOITURES] = {0};
 
 struct Voiture {
-  const char id;
+  char id;
   int position;
   int vitesse;
   bool freinage;
