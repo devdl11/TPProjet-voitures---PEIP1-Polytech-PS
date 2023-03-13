@@ -9,3 +9,24 @@ void tracing::trace(const char *message) {
   std::cout << message << std::endl;
 #endif
 }
+
+void tracing::debug(const char *message) {
+#if DEBUG
+  std::cout << "[DEBUG] ";
+  trace(message);
+#endif
+}
+
+void tracing::error(const char *message) {
+#if DEBUG
+  std::cout << "[ERROR] ";
+  trace(message);
+#endif
+}
+
+void tracing::warning(const char *message) {
+#if DEBUG
+  std::cout << "[WARNING] ";
+  trace(message);
+#endif
+}

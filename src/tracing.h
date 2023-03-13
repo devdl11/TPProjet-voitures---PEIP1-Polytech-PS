@@ -11,6 +11,9 @@
 
 namespace tracing {
   void trace(const char *message);
+  void debug(const char *message);
+  void error(const char *message);
+  void warning(const char *message);
 }
 
 #endif //MAINDIR_SRC_TRACING_H_

@@ -8,52 +8,57 @@
 #include <utility>
 #include <vector>
 #include <cstring>
+#include <map>
+
+// real size = size + 1 for the null terminator
+#define ALPHABET_SIZE 53
 
 namespace NaSch {
 
-const int MAX_VOITURES = 52;
-constexpr char ALPHABET[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+constexpr static const char ALPHABET[ALPHABET_SIZE] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+constexpr static const char INVALID_ID = -1;
 
 // Buffer pour les ids. Puisqu'on souhaite garder une taille fixe, on utilise un tableau statique initialisé à 0.
-static unsigned char idsBuffer[MAX_VOITURES] = {0};
+static unsigned char idsBuffer[ALPHABET_SIZE] = {0};
 
 struct Voiture {
-  char id;
+  const char * id;
   int position;
   int vitesse;
   bool freinage;
 
   Voiture() : Voiture(0, 0, false) {}
   // Ici utiliser `ALPHABET[0]` est safe puisque la taille de `ALPHABET` est connue à la compilation et ne peut changer.
-  Voiture(int position, int vitesse, bool freinage) : Voiture(ALPHABET[0], position, vitesse, freinage) {}
-  Voiture(char id, int position, int vitesse, bool freinage)
+  Voiture(int position, int vitesse, bool freinage) : Voiture(&INVALID_ID, position, vitesse, freinage) {}
+  Voiture(const char * id, int position, int vitesse, bool freinage)
       : id(id), position(position), vitesse(vitesse), freinage(freinage) {}
 
 };
 
-struct Cellule {
-  Voiture *voiture;
-
-  Cellule() : voiture(nullptr) {}
-
-  bool estVide() const { return voiture == nullptr; }
-};
-
 struct Route {
-  std::vector<unsigned char> availableIds;
+  // Don't edit the position field of the Voiture struct, cause it's synchronized with the key of the map !
+  // or else, call synchroniserVoitures();
+  // Don't edit the number of elements in the vector, cause it's synchronized with the numVoitures field !
   std::vector<Voiture> voitures;
-  std::vector<Cellule> cellules;
+  std::map<int, Voiture *> voituresMap;
+
   int vmax;
   double pv;
 
+  // Don't edit theses fields, they are used to generate ids and keep track of the number of cars.
+  // TODO maybe do: Merge some of the functions inside the struct and make theses fields private.
+  size_t availableIdsPos = ALPHABET_SIZE - 2;
+  size_t numVoitures = 0;
+
   Route() : Route(0, 0.0) {}
-  Route(int vmax, double pv) : Route(vmax, pv, {}, {}) {}
+  Route(int vmax, double pv) : Route(vmax, pv, {}) {}
   // strlen va être évaluée à la compilation et remplacée par la valeur de la taille de ALPHABET qui est constante à la compilation.
-  Route(int vmax, double pv, std::vector<Voiture> voitures, std::vector<Cellule> cellules)
-      : vmax(vmax), pv(pv), voitures(std::move(voitures)), cellules(std::move(cellules)), availableIds(ALPHABET, ALPHABET + std::strlen(ALPHABET)) {}
+  Route(int vmax, double pv, std::vector<Voiture> voitures)
+      : vmax(vmax), pv(pv), voitures(std::move(voitures)) {}
 
   bool idsValides();
-  unsigned char prochainId();
+  const char & prochainId();
+  void synchroniserVoitures();
 };
 
 // Fonctions fournies

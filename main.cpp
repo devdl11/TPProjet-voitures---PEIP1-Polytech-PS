@@ -5,7 +5,6 @@
 using namespace std;
 
 int main() {
-  std::cout << "Hello, World!" << std::endl;
   testing::test1();
   testing::test1Bis();
   testing::test1Ter();
