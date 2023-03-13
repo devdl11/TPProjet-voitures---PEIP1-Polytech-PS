@@ -3,6 +3,7 @@
 //
 
 #include "nasch.h"
+#include "tracing.h"
 #include <stdint.h>
 
 namespace NaSch {
@@ -21,6 +22,7 @@ bool Route::idsValides() {
   }
   return true;
 }
+
 unsigned char Route::prochainId() {
   if (availableIds.empty()) {
     return 0;
@@ -35,7 +37,19 @@ void initialiser(Route &r, std::size_t taille, int vmax) {
 }
 
 void accelerer(Route &r) {
-
+  for (size_t i = 0; i < r.voitures.size(); ++i) {
+    Voiture &voiture = r.voitures[i];
+    if (i < r.voitures.size() - 1) {
+      Voiture &voitureSuivante = r.voitures[i + 1];
+      if (voitureSuivante.position - voiture.position >= voiture.vitesse) {
+        voiture.vitesse++;
+      } else {
+        voiture.vitesse = voitureSuivante.position - voiture.position;
+      }
+    } else {
+      voiture.vitesse++;
+    }
+  }
 }
 
 void freiner(Route &r) {
@@ -52,7 +66,32 @@ void deplacer(Route &r) {
 
 void ajouter(Route &r, int position) {
   // On suppose que la position est valide.
-
+  // TODO: Optimiser / Refactorings ce code.
+  for (size_t i = position-1; i < r.cellules.size(); ++i) {
+    if (r.cellules[i].estVide()) {
+      unsigned char id = r.prochainId();
+      if (id == 0) {
+        tracing::trace("Impossible d'ajouter une voiture, la route est pleine.");
+        return;
+      }
+      r.voitures.emplace_back(id, i, 0, false);
+      r.cellules[i].voiture = &r.voitures.back();
+      return;
+    }
+  }
+  for (size_t i = 0; i < position; i++) {
+    if (r.cellules[i].estVide()) {
+      unsigned char id = r.prochainId();
+      if (id == 0) {
+        tracing::trace("Impossible d'ajouter une voiture, la route est pleine.");
+        return;
+      }
+      r.voitures.emplace_back(id, i, 0, false);
+      r.cellules[i].voiture = &r.voitures.back();
+      return;
+    }
+  }
+  tracing::trace("Impossible d'ajouter une voiture, la route est pleine.");
 }
 
 void supprimer(Route &r, char Id) {
@@ -64,7 +103,21 @@ void simuler(Route &r, int n) {
 }
 
 void afficherR(const NaSch::Route &r) {
+  char * buffer = (char *)calloc(sizeof(unsigned char), r.cellules.size());
 
+  for (size_t i = 0; i < r.cellules.size(); i++) {
+    if (i % 10 == 0 and i > 0) {
+      std::cout << "|";
+    } else if (i % 5 == 0 and i > 0) {
+      std::cout << "+";
+    } else {
+      std::cout << ".";
+    }
+    *(buffer + i) = r.cellules.at(i).estVide() ? ' ' : r.cellules.at(i).voiture->id;
+  }
+  *(buffer + r.cellules.size() - 1) = '\0';
+  std::cout << std::endl << buffer << std::endl;
+  free(buffer);
 }
 
 void afficherV(const Route &r, char Id) {
