@@ -128,8 +128,8 @@ void ajouter(Route &r, int position) {
   tracing::trace("Impossible d'ajouter une voiture, la route est pleine.");
 }
 
-Voiture * trouverSelonId(Route& r, unsigned char id) {
-  for (Voiture& v : r.voitures) {
+const Voiture * trouverSelonId(const Route& r, unsigned char id) {
+  for (const Voiture& v : r.voitures) {
     if (v.id == id) {
       return &v;
     }
@@ -194,13 +194,13 @@ void afficherV(const Route &r, char Id) {
 }
 
 int saVitesse(const Route &r, char Id) {
-  return 0;
+  const Voiture * v = trouverSelonId(r, (unsigned char)Id);
 }
 
-bool aRalenti(Route &r, char Id) {
-  Voiture * v = trouverSelonId(r, (unsigned char)Id);
+bool aRalenti(const Route &r, char Id) {
+  const Voiture * v = trouverSelonId(r, (unsigned char)Id);
   if (v == nullptr) {
-    tracing::trace("Error: Impossible de trouver");
+    tracing::trace(&"Error: Impossible de trouver la voiture ayant l'id:" [ Id]);
     return false;
   }
   return v->freinage;
