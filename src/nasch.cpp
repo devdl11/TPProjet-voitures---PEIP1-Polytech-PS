@@ -6,6 +6,8 @@
 #include <stdint.h>
 #include <iostream>
 #include <cstdlib>
+#include <vector>
+#include "tracing.h"
 
 namespace NaSch {
 
@@ -73,7 +75,23 @@ void ajouter(Route &r, int position) {
 
 }
 
+Voiture * trouverSelonId(Route& r, unsigned char id) {
+  for (Voiture& v : r.voitures) {
+    if (v.id == id) {
+      return &v;
+    }
+  }
+  return nullptr;
+}
+
 void supprimer(Route &r, char Id) {
+  Voiture *pt_vt = trouverSelonId(r,Id);
+  if (pt_vt == nullptr)
+  {
+    tracing::trace(&"Error : Impossible de trouver la voiture ayant l'id : " [ Id]);
+    return;
+  }
+  r.voitures.erase(r.voitures.begin() + (pt_vt->position));
 
 }
 
