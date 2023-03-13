@@ -55,7 +55,16 @@ void ralentir(Route &r) {
 }
 
 void deplacer(Route &r) {
-
+  for (size_t i = 0; i < r.voitures.size(); i++)
+  {
+    if (r.voitures.at(i).position == r.cellules.size())
+    {
+      r.voitures.at(i).position = 0;
+    }
+    else{
+      r.voitures.at(i).position++;
+    }
+  }
 }
 
 void ajouter(Route &r, int position) {
