@@ -4,7 +4,8 @@
 
 #include "nasch.h"
 #include <stdint.h>
-#include  <cstdlib>
+#include <iostream>
+#include <cstdlib>
 
 namespace NaSch {
 
@@ -79,10 +80,10 @@ void supprimer(Route &r, char Id) {
 void simuler(Route &r, int n) {
   for (int i = 0; i < n; i++)
   {
-    accelerer(&r);
-    freiner(&r);
-    ralentir(&r);
-    deplacer(&r);
+    accelerer(r);
+    freiner(r);
+    ralentir(r);
+    deplacer(r);
   }
 }
 
@@ -91,7 +92,20 @@ void afficherR(const NaSch::Route &r) {
 }
 
 void afficherV(const Route &r, char Id) {
-
+  for (size_t i = 0; i < r.voitures.size(); i++)
+  {
+    if (r.voitures.at(i).id == Id)
+    {
+      std::cout << "La position de la voiture " << Id << " est : " << r.voitures.at(i).position << ", sa vitesse est de " << r.voitures.at(i).vitesse;
+      if (r.voitures.at(i).freinage)
+      {
+        std::cout << " et elle a freiné à la dernière étape 3." << std::endl;
+      }
+      else{
+        std::cout << " et elle n'a pas freiné à la dernière étape 3." << std::endl;
+      }
+    }
+  }
 }
 
 int saVitesse(const Route &r, char Id) {
