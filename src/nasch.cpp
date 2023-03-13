@@ -80,11 +80,11 @@ bool aRalenti(const Route &r, char Id) {
 }
 
 void setVMax(Route &r, int newVMax) {
-
+  r.vmax = newVMax;
 }
 
 void setPV(Route &r, double newPV) {
-
+  r.pv = newPV;
 }
 
 }
