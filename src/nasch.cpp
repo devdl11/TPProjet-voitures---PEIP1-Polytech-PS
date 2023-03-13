@@ -39,11 +39,30 @@ void initialiser(Route &r, std::size_t taille, int vmax) {
 }
 
 void accelerer(Route &r) {
+  for (auto & voiture : r.voitures) {
+    voiture.vitesse += 1;
+  }
+}
 
+size_t voitureSuivante(const Route &r, size_t start) {
+  size_t index = 0;
+  size_t s = r.cellules.size();
+  while (index < s) {
+    if (not r.cellules.at((index + start) % s).estVide()) {
+      return (index + start) % s;
+    }
+  }
 }
 
 void freiner(Route &r) {
-
+  for (auto & voiture : r.voitures) {
+    int dist = std::abs(r.voitures.at(voitureSuivante(r, voiture.position)).position - voiture.position);
+    if (voiture.vitesse > dist) {
+      voiture.vitesse = dist;
+    } else {
+      voiture.vitesse++;
+    }
+  }
 }
 
 void ralentir(Route &r) {
@@ -55,6 +74,15 @@ void ralentir(Route &r) {
       r.voitures.at(i).vitesse--;
     }
   }
+}
+
+Voiture * trouverSelonId(Route& r, unsigned char id) {
+  for (Voiture& v : r.voitures) {
+    if (v.id == id) {
+      return &v;
+    }
+  }
+  return nullptr;
 }
 
 void deplacer(Route &r) {
@@ -72,16 +100,32 @@ void deplacer(Route &r) {
 
 void ajouter(Route &r, int position) {
   // On suppose que la position est valide.
-
-}
-
-Voiture * trouverSelonId(Route& r, unsigned char id) {
-  for (Voiture& v : r.voitures) {
-    if (v.id == id) {
-      return &v;
+  // TODO: Optimiser / Refactorings ce code.
+  for (size_t i = position-1; i < r.cellules.size(); ++i) {
+    if (r.cellules[i].estVide()) {
+      unsigned char id = r.prochainId();
+      if (id == 0) {
+        tracing::trace("Impossible d'ajouter une voiture, la route est pleine.");
+        return;
+      }
+      r.voitures.emplace_back(id, i, 0, false);
+      r.cellules[i].voiture = &r.voitures.back();
+      return;
     }
   }
-  return nullptr;
+  for (size_t i = 0; i < position; i++) {
+    if (r.cellules[i].estVide()) {
+      unsigned char id = r.prochainId();
+      if (id == 0) {
+        tracing::trace("Impossible d'ajouter une voiture, la route est pleine.");
+        return;
+      }
+      r.voitures.emplace_back(id, i, 0, false);
+      r.cellules[i].voiture = &r.voitures.back();
+      return;
+    }
+  }
+  tracing::trace("Impossible d'ajouter une voiture, la route est pleine.");
 }
 
 void supprimer(Route &r, char Id) {
@@ -106,7 +150,21 @@ void simuler(Route &r, int n) {
 }
 
 void afficherR(const NaSch::Route &r) {
+  char * buffer = (char *)calloc(sizeof(unsigned char), r.cellules.size());
 
+  for (size_t i = 0; i < r.cellules.size(); i++) {
+    if (i % 10 == 0 and i > 0) {
+      std::cout << "|";
+    } else if (i % 5 == 0 and i > 0) {
+      std::cout << "+";
+    } else {
+      std::cout << ".";
+    }
+    *(buffer + i) = r.cellules.at(i).estVide() ? ' ' : r.cellules.at(i).voiture->id;
+  }
+  *(buffer + r.cellules.size() - 1) = '\0';
+  std::cout << std::endl << buffer << std::endl;
+  free(buffer);
 }
 
 void afficherV(const Route &r, char Id) {
