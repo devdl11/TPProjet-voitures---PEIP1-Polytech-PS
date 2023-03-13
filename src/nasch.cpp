@@ -4,6 +4,7 @@
 
 #include "nasch.h"
 #include <stdint.h>
+#include  <cstdlib>
 
 namespace NaSch {
 
@@ -43,7 +44,14 @@ void freiner(Route &r) {
 }
 
 void ralentir(Route &r) {
-
+  for (size_t i = 0; i < r.voitures.size(); i++)
+  {
+    double po = (rand()%100)/100;
+    if (po > r.pv)
+    {
+      r.voitures.at(i).vitesse--;
+    }
+  }
 }
 
 void deplacer(Route &r) {
