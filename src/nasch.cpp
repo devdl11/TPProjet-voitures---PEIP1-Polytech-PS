@@ -77,7 +77,13 @@ void supprimer(Route &r, char Id) {
 }
 
 void simuler(Route &r, int n) {
-
+  for (int i = 0; i < n; i++)
+  {
+    accelerer(&r);
+    freiner(&r);
+    ralentir(&r);
+    deplacer(&r);
+  }
 }
 
 void afficherR(const NaSch::Route &r) {
