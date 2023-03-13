@@ -1,6 +1,6 @@
 # Voitures - Mini Projet
 URL : https://github.com/devdl11/tp3-voitures
 ## Authors
-- Ledriem Yanni
+- Ladrem Yanni
 - Luca David
 
