@@ -3,7 +3,7 @@
 //
 
 #include "tests.h"
-#include "nasch.h"
+#include "nasch_test.h"
 
 #include <iostream>
 
