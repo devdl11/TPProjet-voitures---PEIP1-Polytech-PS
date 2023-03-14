@@ -16,13 +16,6 @@ void tracing::trace(const char *message) {
 #endif
 }
 
-void tracing::debug(const char *message) {
-#if DEBUG
-  std::cout << "[DEBUG] ";
-  trace(message);
-#endif
-}
-
 void tracing::error(const char *message) {
 #if DEBUG
   breakPoint();

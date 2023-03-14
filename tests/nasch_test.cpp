@@ -12,6 +12,10 @@ using namespace NaSch;
 namespace testing {
 
 void initialiser(Route &r, std::size_t taille, int vmax) {
+  if (taille >= ALPHABET_SIZE) {
+    tracing::warning("La taille de la route est trop grande ! Elle est limitée à ");
+    tracing::warning(std::to_string(ALPHABET_SIZE).c_str());
+  }
   r = Route(vmax, 0, std::vector<Voiture>(taille, Voiture()));
 }
 

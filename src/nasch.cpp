@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <set>
 #include <random>
+#include <algorithm>
 #include "tracing.h"
 
 namespace NaSch {
@@ -24,7 +25,7 @@ namespace NaSch {
 }
 
 const char &Route::prochainId() {
-  if (idsIndex < 0 or idsIndex >= ALPHABET_SIZE) {
+  if (idsIndex >= ALPHABET_SIZE) {
     return INVALID_ID;
   }
   return ALPHABET[idsIndex++];
@@ -45,7 +46,7 @@ void Route::synchroniserVoitures() {
 
 void Route::accelerer() {
   for (size_t i = 0; i < numVoitures; i++) {
-    if (voitures[i].id[0] == INVALID_ID or voitures[i].id == nullptr) {
+    if (voitures[i].id == nullptr or voitures[i].id[0] == INVALID_ID) {
       tracing::error("Voiture sans id valide");
       exit(1);
     }
@@ -110,12 +111,8 @@ void Route::ralentir() {
 }
 
 const Voiture *Route::voitureSelonId(const char *id) const {
-  for (const Voiture &v : voitures) {
-    if (v.id[0] == *id) {
-      return &v;
-    }
-  }
-  return nullptr;
+  auto search = std::find_if(voitures.begin(), voitures.end(), [id](const Voiture &v) { return v.id[0] == *id; });
+  return search == voitures.end() ? nullptr : &(*search);
 }
 
 void Route::ajouter(int position, int vitesse, bool freinage) {
@@ -175,7 +172,7 @@ void Route::simuler(int iterations) {
 }
 
 void Route::afficher() const {
-  char *buffer = (char *) calloc(sizeof(char), voitures.size() + 1);
+  char *buffer = static_cast<char *>(calloc(sizeof(char), voitures.size() + 1));
 
   if (buffer == nullptr) {
     tracing::error("Impossible d'allouer de la mémoire pour l'affichage");
