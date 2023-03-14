@@ -25,10 +25,10 @@ bool Route::idsValides() {
 }
 
 const char &Route::prochainId() {
-  if (availableIdsPos < 0 or availableIdsPos >= ALPHABET_SIZE) {
+  if (idsIndex < 0 or idsIndex >= ALPHABET_SIZE) {
     return INVALID_ID;
   }
-  return ALPHABET[availableIdsPos--];
+  return ALPHABET[idsIndex++];
 }
 
 // If you ever need to call this manually, you can have some issues
@@ -62,7 +62,6 @@ void accelerer(Route &r) {
   }
 }
 
-// TODO: Edit this function
 const Voiture * voitureSuivante(const Route &r, size_t start) {
   Voiture *v = nullptr;
   for (auto iterator : r.voituresMap) {
@@ -89,8 +88,8 @@ void freiner(Route &r) {
         dist += (int)r.voitures.size();
     }
     dist -= voiture.position;
-    if (voiture.vitesse > dist) {
-      voiture.vitesse = dist;
+    if (voiture.vitesse >= dist) {
+      voiture.vitesse = dist - 1;
     }
   }
 }
@@ -99,7 +98,7 @@ void ralentir(Route &r) {
   static std::random_device dev;
   static std::mt19937 rng(dev());
   std::uniform_real_distribution<> dist(0, 1);
-  for (size_t i = 0; i < r.voitures.size(); i++) {
+  for (size_t i = 0; i < r.numVoitures; i++) {
     double po = dist(rng);
     if (po < r.pv and r.voitures.at(i).vitesse > 0) {
       r.voitures.at(i).vitesse--;
@@ -117,28 +116,12 @@ const Voiture *trouverSelonId(const Route &r, char id) {
 }
 
 void deplacer(Route &r) {
+  std::map<int, Voiture *> voituresMap;
   for (auto it : r.voituresMap) {
-    int before = it.second->position;
-    it.second->position += it.second->vitesse;
-    if (it.second->position >= r.voitures.size()) {
-      it.second->position -= (int)r.voitures.size();
-    }
-    if (before == it.second->position) {
-      continue;
-    }
-    r.voituresMap[it.second->position] = it.second;
-    r.voituresMap[before] = nullptr;
+    it.second->position = (it.second->position + it.second->vitesse) % (int)r.voitures.size();
+    voituresMap[it.second->position] = it.second;
   }
-  std::vector<int> toRemove = std::vector<int>(r.voituresMap.size());
-  int i = 0;
-  for (auto it : r.voituresMap) {
-    if (it.second == nullptr) {
-      toRemove.at(i++) = it.first;
-    }
-  }
-  for (int j = 0; j < i; ++j) {
-      r.voituresMap.erase(toRemove.at(j));
-  }
+  r.voituresMap = std::move(voituresMap);
 }
 
 void ajouter(Route &r, int position) {
@@ -211,13 +194,16 @@ void simuler(Route &r, int n) {
     freiner(r);
     ralentir(r);
     deplacer(r);
+#if DEBUG
+
+#endif
   }
 }
 
 void afficherR(const NaSch::Route &r) {
-  char *buffer = (char *) calloc(sizeof(char), r.voitures.size());
+  char *buffer = (char *) calloc(sizeof(char), r.voitures.size() + 1);
 
-  for (size_t i = 0; i < r.voitures.size(); i++) {
+  for (size_t i = 1; i < r.voitures.size() + 1; i++) {
     if (i % 10 == 0 and i > 0) {
       std::cout << "|";
     } else if (i % 5 == 0 and i > 0) {
@@ -225,9 +211,9 @@ void afficherR(const NaSch::Route &r) {
     } else {
       std::cout << ".";
     }
-    *(buffer + i) = r.voituresMap.count((int)i) == 0 ? ' ' : r.voituresMap.at((int)i)->id[0];
+    *(buffer + i - 1) = r.voituresMap.count((int)i - 1) == 0 ? ' ' : r.voituresMap.at((int)i - 1)->id[0];
   }
-  *(buffer + r.voitures.size() - 1) = '\0';
+  *(buffer + r.voitures.size()) = '\0';
   std::cout << std::endl << buffer << std::endl;
   free(buffer);
 }

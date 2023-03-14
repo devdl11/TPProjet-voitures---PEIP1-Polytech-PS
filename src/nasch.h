@@ -47,7 +47,7 @@ struct Route {
 
   // Don't edit theses fields, they are used to generate ids and keep track of the number of cars.
   // TODO maybe do: Merge some of the functions inside the struct and make theses fields private.
-  size_t availableIdsPos = ALPHABET_SIZE - 2;
+  size_t idsIndex = 0;
   size_t numVoitures = 0;
 
   Route() : Route(0, 0.0) {}

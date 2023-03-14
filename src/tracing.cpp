@@ -4,6 +4,12 @@
 
 #include "tracing.h"
 
+#if DEBUG
+void breakPoint() {
+  asm("int $3");
+}
+#endif
+
 void tracing::trace(const char *message) {
 #if DEBUG
   std::cout << message << std::endl;
@@ -19,6 +25,7 @@ void tracing::debug(const char *message) {
 
 void tracing::error(const char *message) {
 #if DEBUG
+  breakPoint();
   std::cout << "[ERROR] ";
   trace(message);
 #endif
