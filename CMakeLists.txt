@@ -3,4 +3,4 @@ project(mainDir)
 
 set(CMAKE_CXX_STANDARD 17)
 
-add_executable(mainDir main.cpp src/nasch.h src/nasch.cpp src/tests.cpp src/tests.h src/tracing.cpp src/tracing.h src/nasch_test.cpp src/nasch_test.h)
+add_executable(mainDir main.cpp src/nasch.h src/nasch.cpp tests/tests.cpp tests/tests.h src/tracing.cpp src/tracing.h tests/nasch_test.cpp tests/nasch_test.h)

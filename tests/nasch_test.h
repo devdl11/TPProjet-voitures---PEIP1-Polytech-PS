@@ -5,7 +5,7 @@
 #ifndef MAINDIR_SRC_NASCH_TEST_H_
 #define MAINDIR_SRC_NASCH_TEST_H_
 
-#include "nasch.h"
+#include "../src/nasch.h"
 
 namespace testing {
 

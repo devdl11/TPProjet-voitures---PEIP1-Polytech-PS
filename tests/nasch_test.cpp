@@ -3,11 +3,9 @@
 //
 #include "nasch_test.h"
 #include <iostream>
-#include <cstdlib>
 #include <vector>
 #include <set>
-#include <random>
-#include "tracing.h"
+#include "../src/tracing.h"
 
 using namespace NaSch;
 

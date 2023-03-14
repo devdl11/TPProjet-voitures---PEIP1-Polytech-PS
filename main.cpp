@@ -1,6 +1,6 @@
 #include <iostream>
-#include "src/nasch_test.h"
-#include "src/tests.h"
+#include "tests/nasch_test.h"
+#include "tests/tests.h"
 
 using namespace std;
 
