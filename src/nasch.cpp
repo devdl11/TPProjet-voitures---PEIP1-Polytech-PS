@@ -31,7 +31,7 @@ const char &Route::prochainId() {
   return ALPHABET[idsIndex++];
 }
 
-// If you ever need to call this manually, you can have some issues
+[[deprecated("synchroniserVoitures() is deprecated cause the map is normally updated automatically.")]]
 void Route::synchroniserVoitures() {
   tracing::warning("Appel d'une fonction à risque: synchroniserVoitures");
   voituresMap.clear();
@@ -50,12 +50,10 @@ void initialiser(Route &r, std::size_t taille, int vmax) {
 
 void accelerer(Route &r) {
   for (size_t i = 0; i < r.numVoitures; i++) {
-#if DEBUG
     if (r.voitures[i].id[0] == INVALID_ID or r.voitures[i].id == nullptr) {
       tracing::error("Voiture sans id valide");
       exit(1);
     }
-#endif
     if (r.voitures[i].vitesse < r.vmax) {
       r.voitures[i].vitesse++;
     }
@@ -126,45 +124,22 @@ void deplacer(Route &r) {
 
 void ajouter(Route &r, int position) {
   // On suppose que la position est valide.
-  // TODO: Optimiser / Refactorings ce code.
   if (r.numVoitures >= r.voitures.size()) {
     tracing::error("Impossible d'ajouter une voiture, la route est pleine.");
     return;
   }
 
-  int previous = -1;
-  int founded = -1;
-  int search = -1;
-  for (auto iterator = r.voituresMap.begin(); iterator != r.voituresMap.end(); ++iterator) {
-    if (previous < 0) {
-      previous = iterator->first;
-    } else if (founded < 0 and previous + 1 != iterator->first) {
-      founded = previous + 1;
-    }
-    if (iterator->first >= position and search < 0) {
-      search = iterator->first;
-    } else if (iterator->first >= position and previous + 1 < iterator->first) {
-      Voiture v = Voiture(&r.prochainId(), previous + 1, 0, false);
-      if (v.id[0] == INVALID_ID) {
-        tracing::error("Impossible d'ajouter une voiture, la route est pleine. Mais comment sommes nous arrivés là ?");
-        return;
-      }
-      r.voitures.at(r.numVoitures) = v;
-      r.voituresMap[previous + 1] = &r.voitures.at(r.numVoitures);
-      r.numVoitures++;
-      return;
-    }
+  while (r.voituresMap.count(position % (int)r.voitures.size())) {
+    position++;
   }
-  if (founded < 0 or search < 0) {
-    founded = position;
-  }
-  Voiture v = Voiture(&r.prochainId(), founded, 0, false);
+
+  Voiture v = Voiture(&r.prochainId(), position, 0, false);
   if (v.id[0] == INVALID_ID) {
-    tracing::error("Impossible d'ajouter une voiture, la route est pleine. Mais comment sommes nous arrivés là ? (2)");
+    tracing::error("Impossible d'ajouter une voiture, la route est pleine. Mais comment sommes nous arrivés là ?");
     return;
   }
   r.voitures.at(r.numVoitures) = v;
-  r.voituresMap[founded] = &r.voitures.at(r.numVoitures);
+  r.voituresMap[position] = &r.voitures.at(r.numVoitures);
   r.numVoitures++;
 }
 
@@ -176,13 +151,17 @@ void supprimer(Route &r, char Id) {
   }
   // This will crash if in somehow the the map is not in sync with the vector.
   r.voituresMap.erase(pt_vt->position);
-  for (size_t i = 0; i < r.voitures.size(); i++) {
-    if (r.voitures.at(i).position == pt_vt->position) {
-      r.voitures.erase(r.voitures.begin() + (int)i);
-      break;
-    }
+  int fromWhereLinea = pt_vt->id[0] - ALPHABET[0];
+  // Here we need to move all the cars after the one we deleted, setting their id accordingly and updating the map
+  // cause the pointer will be invalid.
+  for (size_t i = fromWhereLinea; i < r.numVoitures - 1; i++) {
+    r.voitures.at(i) = r.voitures.at(i + 1);
+    r.voitures.at(i).id--;
+    r.voituresMap[r.voitures.at(i).position] = &r.voitures.at(i);
   }
   r.numVoitures--;
+  r.idsIndex--;
+  // We don't need to do anything with the last car, it will be overwritten when we add a new one.
 }
 
 void simuler(Route &r, int n) {
@@ -194,9 +173,6 @@ void simuler(Route &r, int n) {
     freiner(r);
     ralentir(r);
     deplacer(r);
-#if DEBUG
-
-#endif
   }
 }
 

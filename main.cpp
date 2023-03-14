@@ -16,5 +16,9 @@ int main() {
   NaSch::ajouter(r, 5);
   NaSch::ajouter(r, 5);
   NaSch::afficherR(r);
+  NaSch::supprimer(r, 'B');
+  NaSch::afficherR(r);
+  NaSch::ajouter(r, 5);
+  NaSch::afficherR(r);
   return 0;
 }
