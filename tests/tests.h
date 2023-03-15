@@ -22,7 +22,7 @@ class TestEnvironment {
 
  private:
   std::vector<NaSch::Route> routes;
-  size_t currentRoute = -1;
+  long currentRoute = -1;
 };
 
 class TestFramework {

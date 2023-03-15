@@ -225,7 +225,7 @@ void TestFramework::runTest(const std::string &path) {
 std::string TestEnvironment::runLine(const std::string &line) {
   std::vector<std::string> tokens;
   size_t start = 0;
-  size_t pos = 0;
+  size_t pos;
   while ((pos = line.find(' ', start)) != std::string::npos) {
     tokens.push_back(line.substr(start, pos));
     start = pos + 1;
@@ -242,7 +242,7 @@ std::string TestEnvironment::runLine(const std::string &line) {
       int taille = std::stoi(tokens.at(1));
       int vmax = std::stoi(tokens.at(2));
       routes.emplace_back(std::move(Route(vmax, 0, std::vector<Voiture>(taille))));
-      currentRoute = routes.size() - 1;
+      currentRoute = static_cast<long>(routes.size()) - 1;
       routes.at(currentRoute).attachDebug(&debug);
     } else if (tokens.at(0) == "rselect") {
       if (tokens.size() - 1 < 1) {
