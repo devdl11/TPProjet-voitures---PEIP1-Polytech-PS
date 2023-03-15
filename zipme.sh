@@ -3,4 +3,4 @@ then
   mkdir "release"
 fi
 
-tar --exclude="./release" --exclude="./cmake-*" --exclude="./.*" -czf "release/$(date +%s).tar" "."
+tar --exclude="./release" --exclude="./cmake-*" --exclude="./.*" --exclude="./mainDir" -czf "release/$(date +%s).tar" "."

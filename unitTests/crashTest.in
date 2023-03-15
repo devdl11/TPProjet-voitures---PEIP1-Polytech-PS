@@ -1,0 +1,4 @@
+~Ce test échouera tout le temps si on essaye d'exécuter des commandes n'importe comment
+rcreate 3 30
+ajouter 2
+afficher

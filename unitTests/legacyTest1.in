@@ -1,0 +1,15 @@
+~Ceci est le premier test réécrit sous cette forme
+~
+rcreate 50 3
+ajouter 0
+ajouter 29
+ajouter 44
+afficher
+simuler 1
+afficher
+simuler 1
+afficher
+simuler 1
+afficher
+simuler 15
+afficher

@@ -9,6 +9,7 @@
 #include <vector>
 #include <cstring>
 #include <map>
+#include <sstream>
 
 // real size = size + 1 for the null terminator
 #define ALPHABET_SIZE 53
@@ -17,6 +18,8 @@ namespace NaSch {
 
 constexpr static const char ALPHABET[ALPHABET_SIZE] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 constexpr static const char INVALID_ID = -1;
+
+static std::stringstream buffer = std::stringstream();
 
 struct Voiture {
   Voiture() : Voiture(0, 0, false) {}
@@ -65,6 +68,16 @@ struct Route {
 
   void afficher() const;
 
+  void flush() const;
+  void attachDebug(void (*d)(const std::stringstream &)) {
+    this->debug = d;
+  }
+
+  void detachDebug() {
+    this->debug = nullptr;
+  }
+
+
  private:
   const char &prochainId();
 
@@ -77,6 +90,8 @@ struct Route {
   std::map<int, Voiture *> voituresMap;
   size_t idsIndex = 0;
   size_t numVoitures = 0;
+
+  void (*debug)(const std::stringstream &) = nullptr;
 };
 
 }

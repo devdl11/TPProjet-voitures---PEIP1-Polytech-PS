@@ -172,26 +172,41 @@ void Route::simuler(int iterations) {
 }
 
 void Route::afficher() const {
-  char *buffer = static_cast<char *>(calloc(sizeof(char), voitures.size() + 1));
+  char *bufferPrint = static_cast<char *>(calloc(sizeof(char), voitures.size() + 1));
 
-  if (buffer == nullptr) {
+  if (bufferPrint == nullptr) {
     tracing::error("Impossible d'allouer de la mémoire pour l'affichage");
     exit(1);
   }
 
   for (size_t i = 1; i < voitures.size() + 1; i++) {
     if (i % 10 == 0 and i > 0) {
-      std::cout << "|";
+      buffer << "|";
     } else if (i % 5 == 0 and i > 0) {
-      std::cout << "+";
+      buffer << "+";
     } else {
-      std::cout << ".";
+      buffer << ".";
     }
-    *(buffer + i - 1) = voituresMap.count((int)i - 1) == 0 ? ' ' : voituresMap.at((int)i - 1)->id[0];
+    *(bufferPrint + i - 1) = voituresMap.count((int)i - 1) == 0 ? ' ' : voituresMap.at((int)i - 1)->id[0];
   }
-  *(buffer + voitures.size()) = '\0';
-  std::cout << std::endl << buffer << std::endl;
-  free(buffer);
+  *(bufferPrint + voitures.size()) = '\0';
+  buffer << std::endl << bufferPrint << std::endl;
+  flush();
+  free(bufferPrint);
+}
+
+void Route::flush() const {
+  if (debug != nullptr) {
+    try {
+      debug(buffer);
+    } catch (std::exception &e) {
+      tracing::error("Error while calling debug function : ");
+      tracing::error(e.what());
+    }
+  }
+  std::cout << buffer.str() << std::endl;
+  buffer.str("");
+  buffer.clear();
 }
 
 }
