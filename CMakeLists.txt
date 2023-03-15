@@ -11,3 +11,5 @@ set_target_properties(mainDir PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_SOURCE_DIR}"
         RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_SOURCE_DIR}"
         )
+
+add_test(NAME run_test COMMAND mainDir)
