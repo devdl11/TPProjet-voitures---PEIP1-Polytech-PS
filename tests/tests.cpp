@@ -321,7 +321,7 @@ std::string TestEnvironment::runLine(const std::string &line) {
         return "Error: no route selected";
       }
       routes.at(currentRoute).deplacer();
-    } else if (tokens.at(0) == "setrandalea") {
+    } else if (tokens.at(0) == "setpv") {
       if (currentRoute == -1) {
         return "Error: no route selected";
       }
@@ -333,6 +333,15 @@ std::string TestEnvironment::runLine(const std::string &line) {
         return "Error: randalea must be between 0 and 100";
       }
       setPV(routes.at(currentRoute), (double)(randalea/100.0));
+    } else if (tokens.at(0) == "setvmax") {
+      if (currentRoute == -1) {
+        return "Error: no route selected";
+      }
+      if (tokens.size() - 1 < 1) {
+        return "Error: not enough arguments";
+      }
+      int vit = std::stoi(tokens.at(1));
+      setVMax(routes.at(currentRoute), vit);
     }
   } catch (const std::exception &e) {
     return "Error: " + std::string(e.what());
