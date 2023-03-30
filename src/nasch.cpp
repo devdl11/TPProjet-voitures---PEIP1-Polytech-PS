@@ -97,12 +97,19 @@ void Route::deplacer() {
   voituresMap = std::move(newVoituresMap);
 }
 
+// Function given by the teacher
+double doubleRand() {
+  return ((double) rand()) / (((double) RAND_MAX) + 1.0);
+}
+
 void Route::ralentir() {
-  static std::random_device dev;
+  /*static std::random_device dev;
   static std::mt19937 rng(dev());
   std::uniform_real_distribution<> dist(0, 1);
+  */
   for (size_t i = 0; i < numVoitures; i++) {
-    double po = dist(rng);
+    // double po = dist(rng);
+    double po = doubleRand();
     if (po < pv and voitures.at(i).vitesse > 0) {
       voitures.at(i).vitesse--;
     }

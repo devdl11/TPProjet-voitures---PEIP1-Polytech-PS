@@ -1,9 +1,14 @@
 #include <iostream>
 #include "tests/tests.h"
+#include "src/tracing.h"
 
 #define TEST true
 
 using namespace std;
+
+void resetRand() {
+  srand(DEBUG ? time(nullptr) : 1);
+}
 
 #if TEST
 void test() {
